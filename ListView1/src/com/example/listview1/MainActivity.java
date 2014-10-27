@@ -24,9 +24,10 @@ public class MainActivity extends Activity {
 
 		listView = (ListView) findViewById(R.id.listView1);
 
-//		setData1();
-//		setData2();
-		setData3();
+		// setData1();
+		// setData2();
+		// setData3();
+		setData4();
 	}
 
 	private void setData1() {
@@ -73,6 +74,30 @@ public class MainActivity extends Activity {
 		SimpleAdapter adapter = new SimpleAdapter(this, data,
 				R.layout.listview_item, from, to);
 		listView.setAdapter(adapter);
+	}
+
+	private void setData4() {
+		String[] text = { "honinbo-shusakus-185th-birthday",
+				"denmark-national-day-2014",
+				"alejandro-obregons-93rd-birthday",
+				"julija-beniuseviciute-zymantienes-169th-birthday",
+				"italian-republic-day-2014", "dragon-boat-festival-2014", };
+
+		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+
+		for (int i = 0; i < text.length; i++) {
+			Map<String, String> item = new HashMap<String, String>();
+			item.put("text1", text[i].substring(0, 5));
+			item.put("text2", text[i]);
+			data.add(item);
+		}
+
+		String[] from = new String[] { "text1", "text2" };
+		int[] to = new int[] { android.R.id.text1, android.R.id.text2 };
+		SimpleAdapter adapter = new SimpleAdapter(this, data,
+				android.R.layout.simple_list_item_2, from, to);
+		listView.setAdapter(adapter);
+
 	}
 
 	@Override
