@@ -9,9 +9,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -28,6 +34,7 @@ public class MainActivity extends Activity {
 		// setData2();
 		// setData3();
 		setData4();
+
 	}
 
 	private void setData1() {
@@ -97,6 +104,25 @@ public class MainActivity extends Activity {
 		SimpleAdapter adapter = new SimpleAdapter(this, data,
 				android.R.layout.simple_list_item_2, from, to);
 		listView.setAdapter(adapter);
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+
+				TextView textView1 = (TextView) view
+						.findViewById(android.R.id.text1);
+				TextView textView2 = (TextView) view
+						.findViewById(android.R.id.text2);
+
+				String detail = "position:" + position + " title:"
+						+ textView1.getText() + " sub-title:"
+						+ textView2.getText();
+
+				Toast.makeText(MainActivity.this, detail, Toast.LENGTH_SHORT)
+						.show();
+			}
+		});
 
 	}
 
