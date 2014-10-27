@@ -4,11 +4,16 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 public class MainActivity extends Activity {
 
+	private int[] LIMIT = new int[] { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31,
+			30, 31 };
 	private Spinner spinner1, spinner2;
 
 	@Override
@@ -23,6 +28,33 @@ public class MainActivity extends Activity {
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, objects);
 		spinner1.setAdapter(adapter);
+		spinner1.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				setSpinner2Data(LIMIT[position]);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+	}
+
+	private void setSpinner2Data(int limit) {
+
+		String[] objects = new String[limit];
+		for (int i = 0; i < objects.length; i++) {
+			objects[i] = String.valueOf(i + 1);
+		}
+
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, objects);
+
+		spinner2.setAdapter(adapter);
 	}
 
 	@Override
