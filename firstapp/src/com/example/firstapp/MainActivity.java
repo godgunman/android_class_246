@@ -12,6 +12,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +26,7 @@ public class MainActivity extends Activity {
 	private Button button;
 	private SharedPreferences sp;
 	private SharedPreferences.Editor editor;
+	private CheckBox checkBox;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,7 @@ public class MainActivity extends Activity {
 		textView = (TextView) findViewById(R.id.textView1);
 		editText = (EditText) findViewById(R.id.editText1);
 		button = (Button) findViewById(R.id.button1);
+		checkBox = (CheckBox) findViewById(R.id.checkBox1);
 
 		textView.setText("Hi world!");
 		button.setText("submit");
@@ -64,6 +69,14 @@ public class MainActivity extends Activity {
 			}
 		});
 		
+		checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				editor.putBoolean("checkBox", isChecked);
+				editor.commit();
+			}
+		});
 		
 		loadSettings();
 	}
@@ -71,10 +84,16 @@ public class MainActivity extends Activity {
 	private void loadSettings() {
 		String text = sp.getString("text", "");
 		editText.setText(text);
+		
+		checkBox.setChecked(sp.getBoolean("checkBox", false));
 	}
 
 	private void submit() {
 		String text = editText.getText().toString();
+		if (checkBox.isChecked()) {
+			text = "*********";
+		}
+		
 		Toast.makeText(this, text, Toast.LENGTH_LONG).show();
 		editText.setText("");
 
