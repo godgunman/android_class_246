@@ -3,9 +3,12 @@ package com.example.firstapp;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -27,7 +30,24 @@ public class MainActivity extends Activity {
 
 		textView.setText("Hi world!");
 		button.setText("submit");
-
+		button.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		editText.setOnKeyListener(new OnKeyListener() {
+			
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				String text = editText.getText().toString();
+				Log.d("debug", text);				
+				return false;
+			}
+		});
 	}
 
 	public void clickButton(View view) {
