@@ -1,6 +1,8 @@
 package com.example.firstapp;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -19,12 +21,17 @@ public class MainActivity extends Activity {
 	private TextView textView;
 	private EditText editText;
 	private Button button;
-
+	private SharedPreferences sp;
+	private SharedPreferences.Editor editor;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		sp = getSharedPreferences("settings", Context.MODE_PRIVATE);
+		editor = sp.edit();
+		
 		textView = (TextView) findViewById(R.id.textView1);
 		editText = (EditText) findViewById(R.id.editText1);
 		button = (Button) findViewById(R.id.button1);
@@ -43,7 +50,9 @@ public class MainActivity extends Activity {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				String text = editText.getText().toString();
-				Log.d("debug", text);
+				
+				editor.putString("text", text);
+				editor.commit();
 
 				if (keyCode == KeyEvent.KEYCODE_ENTER
 						&& event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -54,12 +63,23 @@ public class MainActivity extends Activity {
 				return false;
 			}
 		});
+		
+		
+		loadSettings();
+	}
+	
+	private void loadSettings() {
+		String text = sp.getString("text", "");
+		editText.setText(text);
 	}
 
 	private void submit() {
 		String text = editText.getText().toString();
 		Toast.makeText(this, text, Toast.LENGTH_LONG).show();
 		editText.setText("");
+
+		editor.putString("text", "");
+		editor.commit();
 	}
 
 	public void clickButton(View view) {
