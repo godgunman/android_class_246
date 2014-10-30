@@ -2,6 +2,7 @@ package com.example.firstapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +28,7 @@ public class MainActivity extends Activity {
 	private SharedPreferences sp;
 	private SharedPreferences.Editor editor;
 	private CheckBox checkBox;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -35,7 +36,7 @@ public class MainActivity extends Activity {
 
 		sp = getSharedPreferences("settings", Context.MODE_PRIVATE);
 		editor = sp.edit();
-		
+
 		textView = (TextView) findViewById(R.id.textView1);
 		editText = (EditText) findViewById(R.id.editText1);
 		button = (Button) findViewById(R.id.button1);
@@ -55,7 +56,7 @@ public class MainActivity extends Activity {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				String text = editText.getText().toString();
-				
+
 				editor.putString("text", text);
 				editor.commit();
 
@@ -68,23 +69,24 @@ public class MainActivity extends Activity {
 				return false;
 			}
 		});
-		
+
 		checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
+
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
 				editor.putBoolean("checkBox", isChecked);
 				editor.commit();
 			}
 		});
-		
+
 		loadSettings();
 	}
-	
+
 	private void loadSettings() {
 		String text = sp.getString("text", "");
 		editText.setText(text);
-		
+
 		checkBox.setChecked(sp.getBoolean("checkBox", false));
 	}
 
@@ -93,12 +95,18 @@ public class MainActivity extends Activity {
 		if (checkBox.isChecked()) {
 			text = "*********";
 		}
-		
+
 		Toast.makeText(this, text, Toast.LENGTH_LONG).show();
 		editText.setText("");
 
 		editor.putString("text", "");
 		editor.commit();
+
+		Intent intent = new Intent();
+		intent.setClass(this, MessageActivity.class);
+		intent.putExtra("text", text);
+		intent.putExtra("checkBox", checkBox.isChecked());
+		startActivity(intent);
 	}
 
 	public void clickButton(View view) {
