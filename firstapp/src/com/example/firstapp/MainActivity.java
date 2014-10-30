@@ -12,6 +12,7 @@ import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -31,23 +32,34 @@ public class MainActivity extends Activity {
 		textView.setText("Hi world!");
 		button.setText("submit");
 		button.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
+				submit();
 			}
 		});
-		
+
 		editText.setOnKeyListener(new OnKeyListener() {
-			
+
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				String text = editText.getText().toString();
-				Log.d("debug", text);				
+				Log.d("debug", text);
+
+				if (keyCode == KeyEvent.KEYCODE_ENTER
+						&& event.getAction() == KeyEvent.ACTION_DOWN) {
+					submit();
+					return true;
+				}
+
 				return false;
 			}
 		});
+	}
+
+	private void submit() {
+		String text = editText.getText().toString();
+		Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+		editText.setText("");
 	}
 
 	public void clickButton(View view) {
