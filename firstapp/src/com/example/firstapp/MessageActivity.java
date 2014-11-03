@@ -58,9 +58,9 @@ public class MessageActivity extends Activity {
 		saveToParse(text, isChecked);
 
 //		loadMessageFromParse();
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, readFile());
-		listView.setAdapter(adapter);
+//		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+//				android.R.layout.simple_list_item_1, readFile());
+//		listView.setAdapter(adapter);
 	}
 
 	private void saveToParse(String text, boolean checked) {
@@ -118,14 +118,11 @@ public class MessageActivity extends Activity {
 	}
 
 	private void loadMessageFromParse() {
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("TestObject");
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
 		query.findInBackground(new FindCallback<ParseObject>() {
 
 			@Override
 			public void done(List<ParseObject> objects, ParseException exception) {
-				for (ParseObject object : objects) {
-					Log.d("debug", object.getString("foo"));
-				}
 				setListView(objects);
 				progressDialog.dismiss();
 			}
