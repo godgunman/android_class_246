@@ -17,6 +17,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
+import android.R.integer;
 import android.R.string;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -41,9 +42,13 @@ public class MessageActivity extends Activity {
 
 		listView = (ListView) findViewById(R.id.listView1);
 		
-//		progressDialog = new ProgressDialog(this);
-//		progressDialog.setTitle("Loading... ");
-//		progressDialog.show();
+		progressDialog = new ProgressDialog(this);
+		progressDialog.setTitle("Loading...");
+		progressDialog.show();
+
+		// progressDialog = new ProgressDialog(this);
+		// progressDialog.setTitle("Loading... ");
+		// progressDialog.show();
 
 		String text = getIntent().getStringExtra("text");
 		boolean isChecked = getIntent().getBooleanExtra("checkBox", false);
@@ -51,18 +56,27 @@ public class MessageActivity extends Activity {
 		Log.d("debug", "extra:" + text + "," + isChecked);
 		writeFile(text);
 		saveToParse(text, isChecked);
-		
-		loadMessageFromParse();
+
+//		loadMessageFromParse();
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, readFile());
 		listView.setAdapter(adapter);
 	}
-	private void saveToParse(String text, boolean checked){
+
+	private void saveToParse(String text, boolean checked) {
 		ParseObject message = new ParseObject("Message");
 		message.put("text", text);
 		message.put("checked", checked);
-		message.saveInBackground();
+		message.saveInBackground(new SaveCallback() {
+			
+			@Override
+			public void done(ParseException arg0) {
+				// TODO Auto-generated method stub
+				loadMessageFromParse();
+			}
+		});
 	}
+
 	private void writeFile(String text) {
 		text += "\n";
 
@@ -103,36 +117,54 @@ public class MessageActivity extends Activity {
 		return null;
 	}
 
-
-
 	private void loadMessageFromParse() {
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("TestObject");
 		query.findInBackground(new FindCallback<ParseObject>() {
 
 			@Override
 			public void done(List<ParseObject> objects, ParseException exception) {
-				for(ParseObject object : objects){
+				for (ParseObject object : objects) {
 					Log.d("debug", object.getString("foo"));
 				}
+				setListView(objects);
+				progressDialog.dismiss();
 			}
-			
+
 		});
 
 	}
-	
-	private void setListView(List<ParseObject> messages){
-		List<Map<String, String>> data = new ArrayList<Map<String,String>>();
-		for(ParseObject message : messages){
+
+	private void setListView(List<ParseObject> messages) {
+		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+		for (ParseObject message : messages) {
 			Map<String, String> item = new HashMap<String, String>();
 			item.put("text", message.getString("text"));
 			item.put("checked", "" + message.getBoolean("checked"));
-			
+
 			data.add(item);
 		}
 		String[] from = new String[] { "text", "checked" };
 		int[] to = new int[] { android.R.id.text1, android.R.id.text2 };
+
+		SimpleAdapter adapter = new SimpleAdapter(this, data,
+				android.R.layout.simple_list_item_2, from, to);
 		
-		SimpleAdapter adapter = new SimpleAdapter(this, data, android.R.layout.simple_list_item_2, from, to);
 		listView.setAdapter(adapter);
 	}
+	// private void setListView(List<ParseObject> messages){
+	// List<Map<String, String>> data = new ArrayList<Map<String,String>>();
+	// for(ParseObject message : messages){
+	// Map<String, String> item = new HashMap<String, String>();
+	// item.put("text", message.getString("text"));
+	// item.put("checked", "" + message.getBoolean("checked"));
+	//
+	// data.add(item);
+	// }
+	// String[] from = new String[] { "text", "checked" };
+	// int[] to = new int[] { android.R.id.text1, android.R.id.text2 };
+	//
+	// SimpleAdapter adapter = new SimpleAdapter(this, data,
+	// android.R.layout.simple_list_item_2, from, to);
+	// listView.setAdapter(adapter);
+	// }
 }
