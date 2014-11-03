@@ -50,14 +50,19 @@ public class MessageActivity extends Activity {
 
 		Log.d("debug", "extra:" + text + "," + isChecked);
 		writeFile(text);
-//		saveToParse(text, isChecked);
+		saveToParse(text, isChecked);
 		
 		loadMessageFromParse();
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, readFile());
 		listView.setAdapter(adapter);
 	}
-
+	private void saveToParse(String text, boolean checked){
+		ParseObject message = new ParseObject("Message");
+		message.put("text", text);
+		message.put("checked", checked);
+		message.saveInBackground();
+	}
 	private void writeFile(String text) {
 		text += "\n";
 
