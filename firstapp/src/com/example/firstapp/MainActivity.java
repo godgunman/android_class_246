@@ -1,5 +1,7 @@
 package com.example.firstapp;
 
+import com.parse.Parse;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +35,8 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		Parse.initialize(this, "j0mdZulYSEQYwHcqA0JwRwzIRfY4U0TNtV6Gw2Uz", "z7vFTTlQjLRMkVzNaCjIDMD5R1KqzQkoRzqBZBoS");
 
 		sp = getSharedPreferences("settings", Context.MODE_PRIVATE);
 		editor = sp.edit();
