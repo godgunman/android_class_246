@@ -3,6 +3,7 @@ package com.example.takephoto;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 public class MainActivity extends Activity {
 
 	private static final int REQUEST_CODE_TAKE_PHOTO = 0;
+	private static final int REQUEST_CODE_GALLERY = 1;
 	private ImageView imageView;
 
 	@Override
@@ -45,6 +47,13 @@ public class MainActivity extends Activity {
 			intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
 			startActivityForResult(intent, REQUEST_CODE_TAKE_PHOTO);
 			return true;
+		} else if (id == R.id.action_gallery) {
+
+			Intent intent = new Intent();
+			intent.setType("image/*");
+			intent.setAction(Intent.ACTION_GET_CONTENT);
+			startActivityForResult(intent, REQUEST_CODE_GALLERY);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -57,6 +66,12 @@ public class MainActivity extends Activity {
 			if (resultCode == RESULT_OK) {
 				Bitmap bitmap = data.getParcelableExtra("data");
 				imageView.setImageBitmap(bitmap);
+			}
+		} else if (requestCode == REQUEST_CODE_GALLERY) {
+			if (resultCode == RESULT_OK) {
+				Uri selectedImageUri = data.getData();
+				imageView.setImageURI(selectedImageUri);
+				
 			}
 		}
 	}
