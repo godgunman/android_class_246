@@ -2,6 +2,7 @@ package com.example.takephoto;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -131,10 +132,10 @@ public class MainActivity extends Activity {
 
 	private void saveToParse(Uri uri) {
 		byte[] bytes = uriToBytes(uri);
-		
+
 		final ParseFile file = new ParseFile("photo.png", bytes);
 		file.saveInBackground(new SaveCallback() {
-			
+
 			@Override
 			public void done(ParseException e) {
 				Log.d("debug", file.getUrl());
