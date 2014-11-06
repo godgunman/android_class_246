@@ -19,6 +19,7 @@ import com.parse.SaveCallback;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,6 +28,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 public class MainActivity extends Activity {
 
@@ -35,6 +37,7 @@ public class MainActivity extends Activity {
 
 	private Uri extraOutput;
 	private ImageView imageView;
+	private LinearLayout linearLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,8 @@ public class MainActivity extends Activity {
 				"nEFIK6PmEiidO3qnyvPa04WCi9rJCECOvN8qg5vf");
 
 		imageView = (ImageView) findViewById(R.id.imageView1);
-		
+		linearLayout = (LinearLayout) findViewById(R.id.linearLayout1);
+
 		loadPhotoFromParse();
 	}
 
@@ -158,7 +162,23 @@ public class MainActivity extends Activity {
 			public void done(List<ParseObject> objects, ParseException e) {
 				for (ParseObject object : objects) {
 					ParseFile file = object.getParseFile("file");
-					Log.d("debug", file.getName());
+
+					try {
+						byte[] data = file.getData();
+						Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0,
+								data.length);
+
+						ImageView imageView = new ImageView(MainActivity.this);
+						imageView.setImageBitmap(bitmap);
+
+						linearLayout.addView(imageView);
+						
+						Log.d("debug", file.getName());
+
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
