@@ -1,10 +1,13 @@
 package com.example.takephoto;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
@@ -15,6 +18,8 @@ public class MainActivity extends Activity {
 
 	private static final int REQUEST_CODE_TAKE_PHOTO = 0;
 	private static final int REQUEST_CODE_GALLERY = 1;
+
+	private Uri extraOutput;
 	private ImageView imageView;
 
 	@Override
@@ -43,8 +48,11 @@ public class MainActivity extends Activity {
 		} else if (id == R.id.action_take_photo) {
 			Log.d("debug", "take photo");
 
+			extraOutput = getOutputUri();
+
 			Intent intent = new Intent();
 			intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, extraOutput);
 			startActivityForResult(intent, REQUEST_CODE_TAKE_PHOTO);
 			return true;
 		} else if (id == R.id.action_gallery) {
@@ -64,15 +72,26 @@ public class MainActivity extends Activity {
 
 		if (requestCode == REQUEST_CODE_TAKE_PHOTO) {
 			if (resultCode == RESULT_OK) {
-				Bitmap bitmap = data.getParcelableExtra("data");
-				imageView.setImageBitmap(bitmap);
+				// Bitmap bitmap = data.getParcelableExtra("data");
+				// imageView.setImageBitmap(bitmap);
+				imageView.setImageURI(extraOutput);
 			}
 		} else if (requestCode == REQUEST_CODE_GALLERY) {
 			if (resultCode == RESULT_OK) {
 				Uri selectedImageUri = data.getData();
 				imageView.setImageURI(selectedImageUri);
-				
+
 			}
 		}
+	}
+
+	private Uri getOutputUri() {
+		File dcimDir = Environment
+				.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+		if (dcimDir.exists() == false) {
+			dcimDir.mkdirs();
+		}
+		File file = new File(dcimDir, "photo.png");
+		return Uri.fromFile(file);
 	}
 }
