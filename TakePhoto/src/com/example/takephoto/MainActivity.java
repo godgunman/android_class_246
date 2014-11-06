@@ -6,10 +6,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
+import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import android.app.Activity;
@@ -41,6 +45,8 @@ public class MainActivity extends Activity {
 				"nEFIK6PmEiidO3qnyvPa04WCi9rJCECOvN8qg5vf");
 
 		imageView = (ImageView) findViewById(R.id.imageView1);
+		
+		loadPhotoFromParse();
 	}
 
 	@Override
@@ -59,8 +65,6 @@ public class MainActivity extends Activity {
 		if (id == R.id.action_settings) {
 			return true;
 		} else if (id == R.id.action_take_photo) {
-			Log.d("debug", "take photo");
-
 			extraOutput = getOutputUri();
 
 			Intent intent = new Intent();
@@ -133,12 +137,29 @@ public class MainActivity extends Activity {
 	private void saveToParse(Uri uri) {
 		byte[] bytes = uriToBytes(uri);
 
+		ParseObject object = new ParseObject("Photo");
 		final ParseFile file = new ParseFile("photo.png", bytes);
-		file.saveInBackground(new SaveCallback() {
+
+		object.put("file", file);
+		object.saveInBackground(new SaveCallback() {
 
 			@Override
 			public void done(ParseException e) {
 				Log.d("debug", file.getUrl());
+			}
+		});
+	}
+
+	private void loadPhotoFromParse() {
+		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Photo");
+		query.findInBackground(new FindCallback<ParseObject>() {
+
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				for (ParseObject object : objects) {
+					ParseFile file = object.getParseFile("file");
+					Log.d("debug", file.getName());
+				}
 			}
 		});
 	}
