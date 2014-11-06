@@ -17,6 +17,7 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -38,6 +39,7 @@ public class MainActivity extends Activity {
 	private Uri extraOutput;
 	private ImageView imageView;
 	private LinearLayout linearLayout;
+	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,7 @@ public class MainActivity extends Activity {
 
 		imageView = (ImageView) findViewById(R.id.imageView1);
 		linearLayout = (LinearLayout) findViewById(R.id.linearLayout1);
+		progressDialog = new ProgressDialog(this);
 
 		loadPhotoFromParse();
 	}
@@ -150,16 +153,23 @@ public class MainActivity extends Activity {
 			@Override
 			public void done(ParseException e) {
 				Log.d("debug", file.getUrl());
+				loadPhotoFromParse();
 			}
 		});
 	}
 
 	private void loadPhotoFromParse() {
+		progressDialog.setTitle("Loading...");
+		progressDialog.show();
+		
 		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Photo");
+		query.orderByDescending("createdAt");
 		query.findInBackground(new FindCallback<ParseObject>() {
 
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {
+				linearLayout.removeAllViews();
+				
 				for (ParseObject object : objects) {
 					ParseFile file = object.getParseFile("file");
 
@@ -180,6 +190,7 @@ public class MainActivity extends Activity {
 						e1.printStackTrace();
 					}
 				}
+				progressDialog.dismiss();
 			}
 		});
 	}
