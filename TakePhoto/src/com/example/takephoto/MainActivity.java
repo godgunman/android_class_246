@@ -1,6 +1,15 @@
 package com.example.takephoto;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.SaveCallback;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -26,6 +35,9 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		Parse.initialize(this, "6GIweBfY6S45aUHHhzAkw4cgo6Cb7PlvUyYYwJFs",
+				"nEFIK6PmEiidO3qnyvPa04WCi9rJCECOvN8qg5vf");
 
 		imageView = (ImageView) findViewById(R.id.imageView1);
 	}
@@ -75,12 +87,13 @@ public class MainActivity extends Activity {
 				// Bitmap bitmap = data.getParcelableExtra("data");
 				// imageView.setImageBitmap(bitmap);
 				imageView.setImageURI(extraOutput);
+				saveToParse(extraOutput);
 			}
 		} else if (requestCode == REQUEST_CODE_GALLERY) {
 			if (resultCode == RESULT_OK) {
 				Uri selectedImageUri = data.getData();
 				imageView.setImageURI(selectedImageUri);
-
+				saveToParse(selectedImageUri);
 			}
 		}
 	}
@@ -93,5 +106,39 @@ public class MainActivity extends Activity {
 		}
 		File file = new File(dcimDir, "photo.png");
 		return Uri.fromFile(file);
+	}
+
+	private byte[] uriToBytes(Uri uri) {
+		try {
+			InputStream is = getContentResolver().openInputStream(uri);
+			ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+
+			byte[] buffer = new byte[1024];
+			int len = 0;
+			while ((len = is.read(buffer)) != -1) {
+				byteBuffer.write(buffer, 0, len);
+			}
+			return byteBuffer.toByteArray();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private void saveToParse(Uri uri) {
+		byte[] bytes = uriToBytes(uri);
+		
+		final ParseFile file = new ParseFile("photo.png", bytes);
+		file.saveInBackground(new SaveCallback() {
+			
+			@Override
+			public void done(ParseException e) {
+				Log.d("debug", file.getUrl());
+			}
+		});
 	}
 }
