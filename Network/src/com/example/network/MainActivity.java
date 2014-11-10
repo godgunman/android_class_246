@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		textView = (TextView) findViewById(R.id.textView1);
 
-//		disableStrictMode();
+		// disableStrictMode();
 	}
 
 	@Override
@@ -109,10 +109,10 @@ public class MainActivity extends Activity {
 	}
 
 	public void click(View view) {
-		task.execute("http://www.ntu.edu.tw");
+		new NetworkRunner().execute("http://www.ntu.edu.tw");
 	};
 
-	AsyncTask<String, Integer, String> task = new AsyncTask<String, Integer, String>() {
+	class NetworkRunner extends AsyncTask<String, Integer, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
