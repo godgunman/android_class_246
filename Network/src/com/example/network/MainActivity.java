@@ -149,7 +149,7 @@ public class MainActivity extends Activity {
 		String ll = lat + "," + lng;
 		String query = editText2.getText().toString();
 		String url = String
-				.format("https://api.foursquare.com/v2/venues/search?ll=%s&client_id=%s&client_secret=%s&v=%s&query=",
+				.format("https://api.foursquare.com/v2/venues/search?ll=%s&client_id=%s&client_secret=%s&v=%s&query=%s",
 						ll, API_CLIENT_ID, API_CLIENT_SECRET, API_VERSION,
 						query);
 		new NetworkRunner("foursquare").execute(url);
