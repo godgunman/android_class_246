@@ -16,6 +16,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.DefaultClientConnection;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,6 +24,7 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +32,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+
+	private static final String API_CLIENT_ID = "S1LC42PP1ZRDU5VWZIIZBIVOVACP4DXX0R5SVSXBQHJS3UP1";
+	private static final String API_CLIENT_SECRET = "FCB500VP5QGJEH3GYNHRICNMLZMWXLEOOM0FK30ET5RHTIUC";
+	private static final String API_VERSION = "20140806";
 
 	private TextView textView;
 	private EditText editText;
@@ -122,38 +128,66 @@ public class MainActivity extends Activity {
 			String url = "https://maps.googleapis.com/maps/api/geocode/json?address="
 					+ address;
 
-			new NetworkRunner().execute(url);
+			new NetworkRunner().execute(url, "geocoding");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	};
 
+	private void callFoursquare(double lat, double lng) {
+		String ll = lat + "," + lng;
+		String url = String
+				.format("https://api.foursquare.com/v2/venues/search?ll=%s&client_id=%s&client_secret=%s&v=%s",
+						ll, API_CLIENT_ID, API_CLIENT_SECRET, API_VERSION);
+		new NetworkRunner().execute(url, "foursquare");
+	}
+
 	class NetworkRunner extends AsyncTask<String, Integer, String> {
+
+		private String type;
 
 		@Override
 		protected String doInBackground(String... params) {
+			type = params[1];
 			return fetch(params[0]);
 		}
 
 		protected void onPostExecute(String result) {
-			try {
-				JSONObject object = new JSONObject(result);
-				JSONObject result0 = object.getJSONArray("results")
-						.getJSONObject(0);
-				JSONObject location = result0.getJSONObject("geometry")
-						.getJSONObject("location");
+			if (type.equals("geocoding")) {
+				try {
+					JSONObject object = new JSONObject(result);
+					JSONObject result0 = object.getJSONArray("results")
+							.getJSONObject(0);
+					JSONObject location = result0.getJSONObject("geometry")
+							.getJSONObject("location");
 
-				String formattedAddress = result0
-						.getString("formatted_address");
-				double lat = location.getDouble("lat");
-				double lng = location.getDouble("lng");
+					String formattedAddress = result0
+							.getString("formatted_address");
+					double lat = location.getDouble("lat");
+					double lng = location.getDouble("lng");
 
-				textView.setText(formattedAddress + "," + lat + "," + lng);
+					textView.setText(formattedAddress + "," + lat + "," + lng);
 
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+					callFoursquare(lat, lng);
+
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else if (type.equals("foursquare")) {
+				try {
+					JSONObject object = new JSONObject(result);
+					JSONArray venues = object.getJSONObject("response")
+							.getJSONArray("venues");
+					for (int i = 0; i < venues.length(); i++) {
+						String name = venues.getJSONObject(i).getString("name");
+						Log.d("debug", "name: " + name);
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	};
