@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -28,7 +29,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -39,6 +42,9 @@ public class MainActivity extends Activity {
 
 	private TextView textView;
 	private EditText editText;
+	private EditText editText2;
+	private ListView listView;
+	private ProgressDialog progress;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +52,10 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		textView = (TextView) findViewById(R.id.textView1);
 		editText = (EditText) findViewById(R.id.editText1);
+		editText2 = (EditText) findViewById(R.id.editText2);
+		listView = (ListView) findViewById(R.id.listView1);
+
+		progress = new ProgressDialog(this);
 
 		// disableStrictMode();
 	}
@@ -128,7 +138,7 @@ public class MainActivity extends Activity {
 			String url = "https://maps.googleapis.com/maps/api/geocode/json?address="
 					+ address;
 
-			new NetworkRunner().execute(url, "geocoding");
+			new NetworkRunner("geocoding").execute(url);
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -137,23 +147,35 @@ public class MainActivity extends Activity {
 
 	private void callFoursquare(double lat, double lng) {
 		String ll = lat + "," + lng;
+		String query = editText2.getText().toString();
 		String url = String
-				.format("https://api.foursquare.com/v2/venues/search?ll=%s&client_id=%s&client_secret=%s&v=%s",
-						ll, API_CLIENT_ID, API_CLIENT_SECRET, API_VERSION);
-		new NetworkRunner().execute(url, "foursquare");
+				.format("https://api.foursquare.com/v2/venues/search?ll=%s&client_id=%s&client_secret=%s&v=%s&query=",
+						ll, API_CLIENT_ID, API_CLIENT_SECRET, API_VERSION,
+						query);
+		new NetworkRunner("foursquare").execute(url);
 	}
 
 	class NetworkRunner extends AsyncTask<String, Integer, String> {
 
 		private String type;
 
+		public NetworkRunner(String type) {
+			this.type = type;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			progress.setTitle("[" + type + "] Loading ...");
+			progress.show();
+		}
+
 		@Override
 		protected String doInBackground(String... params) {
-			type = params[1];
 			return fetch(params[0]);
 		}
 
 		protected void onPostExecute(String result) {
+			progress.dismiss();
 			if (type.equals("geocoding")) {
 				try {
 					JSONObject object = new JSONObject(result);
@@ -180,10 +202,19 @@ public class MainActivity extends Activity {
 					JSONObject object = new JSONObject(result);
 					JSONArray venues = object.getJSONObject("response")
 							.getJSONArray("venues");
+
+					String[] data = new String[venues.length()];
 					for (int i = 0; i < venues.length(); i++) {
 						String name = venues.getJSONObject(i).getString("name");
+						data[i] = name;
 						Log.d("debug", "name: " + name);
 					}
+
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+							MainActivity.this,
+							android.R.layout.simple_list_item_1, data);
+					listView.setAdapter(adapter);
+
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
