@@ -16,6 +16,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.DefaultClientConnection;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -135,7 +137,24 @@ public class MainActivity extends Activity {
 		}
 
 		protected void onPostExecute(String result) {
-			textView.setText(result);
+			try {
+				JSONObject object = new JSONObject(result);
+				JSONObject result0 = object.getJSONArray("results")
+						.getJSONObject(0);
+				JSONObject location = result0.getJSONObject("geometry")
+						.getJSONObject("location");
+
+				String formattedAddress = result0
+						.getString("formatted_address");
+				double lat = location.getDouble("lat");
+				double lng = location.getDouble("lng");
+
+				textView.setText(formattedAddress + "," + lat + "," + lng);
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	};
 
