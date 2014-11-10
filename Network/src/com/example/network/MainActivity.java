@@ -16,6 +16,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.DefaultClientConnection;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
@@ -33,7 +34,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		textView = (TextView) findViewById(R.id.textView1);
 
-		disableStrictMode();
+//		disableStrictMode();
 	}
 
 	@Override
@@ -108,7 +109,19 @@ public class MainActivity extends Activity {
 	}
 
 	public void click(View view) {
-		String content = fetch("http://www.ntu.edu.tw/");
-		textView.setText(content);
-	}
+		task.execute("http://www.ntu.edu.tw");
+	};
+
+	AsyncTask<String, Integer, String> task = new AsyncTask<String, Integer, String>() {
+
+		@Override
+		protected String doInBackground(String... params) {
+			return fetch(params[0]);
+		}
+
+		protected void onPostExecute(String result) {
+			textView.setText(result);
+		}
+	};
+
 }
