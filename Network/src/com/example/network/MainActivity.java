@@ -7,8 +7,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.DefaultClientConnection;
+
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +32,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		textView = (TextView) findViewById(R.id.textView1);
+
+		disableStrictMode();
 	}
 
 	@Override
@@ -44,6 +55,12 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	private void disableStrictMode() {
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+				.permitAll().build();
+		StrictMode.setThreadPolicy(policy);
+	}
+
 	private String fetch(String urlStr) {
 
 		try {
@@ -52,12 +69,13 @@ public class MainActivity extends Activity {
 			BufferedReader bufferReader = new BufferedReader(
 					new InputStreamReader(urlConnection.getInputStream()));
 
-			String content = "", line = null;
+			String line = null;
+			StringBuilder builder = new StringBuilder();
 			while ((line = bufferReader.readLine()) != null) {
-				content += line;
+				builder.append(line);
 			}
 
-			return content;
+			return builder.toString();
 
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -67,6 +85,25 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
 
+		return null;
+	}
+
+	private String fetch2(String urlStr) {
+
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpGet get = new HttpGet(urlStr);
+
+		try {
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+			return httpClient.execute(get, responseHandler);
+
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 
