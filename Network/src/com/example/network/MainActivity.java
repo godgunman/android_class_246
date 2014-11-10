@@ -3,9 +3,11 @@ package com.example.network;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -22,17 +24,20 @@ import android.os.StrictMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
 	private TextView textView;
+	private EditText editText;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		textView = (TextView) findViewById(R.id.textView1);
+		editText = (EditText) findViewById(R.id.editText1);
 
 		// disableStrictMode();
 	}
@@ -109,7 +114,17 @@ public class MainActivity extends Activity {
 	}
 
 	public void click(View view) {
-		new NetworkRunner().execute("http://www.ntu.edu.tw");
+		try {
+			String address = URLEncoder.encode(editText.getText().toString(),
+					"utf-8");
+			String url = "https://maps.googleapis.com/maps/api/geocode/json?address="
+					+ address;
+
+			new NetworkRunner().execute(url);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	};
 
 	class NetworkRunner extends AsyncTask<String, Integer, String> {
