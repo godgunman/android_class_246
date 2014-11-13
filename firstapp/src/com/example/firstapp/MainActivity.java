@@ -20,9 +20,11 @@ public class MainActivity extends FragmentActivity {
 		Parse.initialize(this, "j0mdZulYSEQYwHcqA0JwRwzIRfY4U0TNtV6Gw2Uz",
 				"z7vFTTlQjLRMkVzNaCjIDMD5R1KqzQkoRzqBZBoS");
 
+		MyFragmentPagerAdapter adapter = new MyFragmentPagerAdapter(
+				getSupportFragmentManager());
+		
 		viewPager = (ViewPager) findViewById(R.id.viewPager);
-		viewPager.setAdapter(new MyFragmentPagerAdapter(
-				getSupportFragmentManager()));
+		viewPager.setAdapter(adapter);
 	}
 
 	@Override

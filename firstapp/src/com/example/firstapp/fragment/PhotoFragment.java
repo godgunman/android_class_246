@@ -47,11 +47,20 @@ public class PhotoFragment extends Fragment {
 	private ProgressDialog progressDialog;
 
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
+	
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater,
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-		View rootView = inflater.inflate(R.layout.fragment_photo, container, false);
 		
+		View rootView = inflater.inflate(R.layout.fragment_photo, container,
+				false);
+
 		imageView = (ImageView) rootView.findViewById(R.id.imageView1);
 		linearLayout = (LinearLayout) rootView.findViewById(R.id.linearLayout1);
 		progressDialog = new ProgressDialog(getActivity());
@@ -60,8 +69,12 @@ public class PhotoFragment extends Fragment {
 		return rootView;
 	}
 
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		menu.clear();
+		inflater.inflate(R.menu.photo, menu);
+	}
 
-	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -121,7 +134,8 @@ public class PhotoFragment extends Fragment {
 
 	private byte[] uriToBytes(Uri uri) {
 		try {
-			InputStream is = getActivity().getContentResolver().openInputStream(uri);
+			InputStream is = getActivity().getContentResolver()
+					.openInputStream(uri);
 			ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
 
 			byte[] buffer = new byte[1024];

@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
+	private final static String[] TITLE = {"Input", "Message", "Photo"};
+	
 	public MyFragmentPagerAdapter(FragmentManager fm) {
 		super(fm);
 	}
@@ -32,4 +34,8 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 		return 3;
 	}
 
+	@Override
+	public CharSequence getPageTitle(int position) {
+		return TITLE[position];
+	}
 }
