@@ -129,4 +129,5 @@ public class InputFragment extends Fragment {
 		String newText = editText.getText().toString();
 		textView.setText(newText);
 	}
+
 }

@@ -1,15 +1,14 @@
-package com.example.takephoto;
+package com.example.firstapp.fragment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import com.example.firstapp.R;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -25,13 +24,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-public class MainActivity extends Activity {
+public class PhotoFragment extends Fragment {
 
 	private static final int REQUEST_CODE_TAKE_PHOTO = 0;
 	private static final int REQUEST_CODE_GALLERY = 1;
@@ -42,27 +47,21 @@ public class MainActivity extends Activity {
 	private ProgressDialog progressDialog;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_photo);
+	public View onCreateView(LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-		Parse.initialize(this, "6GIweBfY6S45aUHHhzAkw4cgo6Cb7PlvUyYYwJFs",
-				"nEFIK6PmEiidO3qnyvPa04WCi9rJCECOvN8qg5vf");
-
-		imageView = (ImageView) findViewById(R.id.imageView1);
-		linearLayout = (LinearLayout) findViewById(R.id.linearLayout1);
-		progressDialog = new ProgressDialog(this);
+		View rootView = inflater.inflate(R.layout.fragment_photo, container, false);
+		
+		imageView = (ImageView) rootView.findViewById(R.id.imageView1);
+		linearLayout = (LinearLayout) rootView.findViewById(R.id.linearLayout1);
+		progressDialog = new ProgressDialog(getActivity());
 
 		loadPhotoFromParse();
+		return rootView;
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.photo, menu);
-		return true;
-	}
 
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -91,18 +90,18 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (requestCode == REQUEST_CODE_TAKE_PHOTO) {
-			if (resultCode == RESULT_OK) {
+			if (resultCode == Activity.RESULT_OK) {
 				// Bitmap bitmap = data.getParcelableExtra("data");
 				// imageView.setImageBitmap(bitmap);
 				imageView.setImageURI(extraOutput);
 				saveToParse(extraOutput);
 			}
 		} else if (requestCode == REQUEST_CODE_GALLERY) {
-			if (resultCode == RESULT_OK) {
+			if (resultCode == Activity.RESULT_OK) {
 				Uri selectedImageUri = data.getData();
 				imageView.setImageURI(selectedImageUri);
 				saveToParse(selectedImageUri);
@@ -122,7 +121,7 @@ public class MainActivity extends Activity {
 
 	private byte[] uriToBytes(Uri uri) {
 		try {
-			InputStream is = getContentResolver().openInputStream(uri);
+			InputStream is = getActivity().getContentResolver().openInputStream(uri);
 			ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
 
 			byte[] buffer = new byte[1024];
@@ -161,7 +160,7 @@ public class MainActivity extends Activity {
 	private void loadPhotoFromParse() {
 		progressDialog.setTitle("Loading...");
 		progressDialog.show();
-		
+
 		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Photo");
 		query.orderByDescending("createdAt");
 		query.findInBackground(new FindCallback<ParseObject>() {
@@ -169,7 +168,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {
 				linearLayout.removeAllViews();
-				
+
 				for (ParseObject object : objects) {
 					ParseFile file = object.getParseFile("file");
 
@@ -178,11 +177,11 @@ public class MainActivity extends Activity {
 						Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0,
 								data.length);
 
-						ImageView imageView = new ImageView(MainActivity.this);
+						ImageView imageView = new ImageView(getActivity());
 						imageView.setImageBitmap(bitmap);
 
 						linearLayout.addView(imageView);
-						
+
 						Log.d("debug", file.getName());
 
 					} catch (ParseException e1) {
