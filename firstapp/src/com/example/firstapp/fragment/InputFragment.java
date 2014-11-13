@@ -1,14 +1,12 @@
 package com.example.firstapp.fragment;
 
-import com.example.firstapp.MessageActivity;
 import com.example.firstapp.R;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -113,11 +111,16 @@ public class InputFragment extends Fragment {
 		editor.putString("text", "");
 		editor.commit();
 
-		Intent intent = new Intent();
-		intent.setClass(getActivity(), MessageActivity.class);
-		intent.putExtra("text", text);
-		intent.putExtra("checkBox", checkBox.isChecked());
-		startActivity(intent);
+		Bundle args = new Bundle();
+		args.putString("text", text);
+		args.putBoolean("checkBox", checkBox.isChecked());
+
+		MessageFragment messageFragment = new MessageFragment();
+		messageFragment.setArguments(args);
+		
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.add(R.id.container, messageFragment);
+		ft.commit();
 	}
 
 	public void clickButton(View view) {
