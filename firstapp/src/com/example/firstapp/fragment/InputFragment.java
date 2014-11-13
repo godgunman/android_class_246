@@ -45,7 +45,7 @@ public class InputFragment extends Fragment {
 				Context.MODE_PRIVATE);
 		editor = sp.edit();
 
-		View rootView = inflater.inflate(R.layout.fragment_input, container);
+		View rootView = inflater.inflate(R.layout.fragment_input, container, false);
 
 		textView = (TextView) rootView.findViewById(R.id.textView1);
 		editText = (EditText) rootView.findViewById(R.id.editText1);
