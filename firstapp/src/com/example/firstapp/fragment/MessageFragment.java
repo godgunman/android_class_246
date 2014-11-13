@@ -12,7 +12,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,12 +44,16 @@ public class MessageFragment extends Fragment {
 		// progressDialog.setTitle("Loading... ");
 		// progressDialog.show();
 
-		String text = getArguments().getString("text");
-		boolean isChecked = getArguments().getBoolean("checkBox", false);
+		if (getArguments() != null) {
 
-		Log.d("debug", "extra:" + text + "," + isChecked);
-		saveToParse(text, isChecked);
+			String text = getArguments().getString("text");
+			boolean isChecked = getArguments().getBoolean("checkBox", false);
 
+			Log.d("debug", "extra:" + text + "," + isChecked);
+			saveToParse(text, isChecked);
+		} else {
+			loadMessageFromParse();
+		}
 		// TODO Auto-generated method stub
 		return rootView;
 	}

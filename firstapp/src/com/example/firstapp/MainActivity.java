@@ -1,15 +1,16 @@
 package com.example.firstapp;
 
-import com.example.firstapp.fragment.InputFragment;
 import com.parse.Parse;
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
+
+	private ViewPager viewPager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -19,11 +20,9 @@ public class MainActivity extends Activity {
 		Parse.initialize(this, "j0mdZulYSEQYwHcqA0JwRwzIRfY4U0TNtV6Gw2Uz",
 				"z7vFTTlQjLRMkVzNaCjIDMD5R1KqzQkoRzqBZBoS");
 
-		InputFragment inputFragment = new InputFragment();
-
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.add(R.id.container, inputFragment);
-		ft.commit();
+		viewPager = (ViewPager) findViewById(R.id.viewPager);
+		viewPager.setAdapter(new MyFragmentPagerAdapter(
+				getSupportFragmentManager()));
 	}
 
 	@Override

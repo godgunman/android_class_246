@@ -2,8 +2,8 @@ package com.example.firstapp.fragment;
 
 import com.example.firstapp.R;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -120,6 +120,7 @@ public class InputFragment extends Fragment {
 		
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		ft.add(R.id.container, messageFragment);
+		ft.addToBackStack(null);
 		ft.commit();
 	}
 
