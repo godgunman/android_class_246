@@ -1,5 +1,12 @@
 package com.example.simplemaps;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,10 +15,23 @@ import android.view.MenuItem;
 
 public class MainActivity extends Activity {
 
+	private static final LatLng NTU = new LatLng(25.019319, 121.541540);
+
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+		MapFragment mapFragment = (MapFragment) getFragmentManager()
+				.findFragmentById(R.id.map);
+    
+		GoogleMap map = mapFragment.getMap();
+
+		MarkerOptions markOption = new MarkerOptions().position(NTU).title("NTU");
+		Marker marker = map.addMarker(markOption);
+		
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(NTU, 15));
+    
     }
 
 

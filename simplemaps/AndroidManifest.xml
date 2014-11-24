@@ -6,7 +6,7 @@
 
     <!-- Copied from Google Maps Library/AndroidManifest.xml. -->
     <uses-sdk
-        android:minSdkVersion="9"
+        android:minSdkVersion="15"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -29,7 +29,7 @@
         android:theme="@style/AppTheme" >
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDWJCxnnoqWWjjp74sUK1uJpAtRqbOUzFw" />
+            android:value="AIzaSyBcQ0o6KFMyBwp6jkBl7qb2HwNqUSR6Tn8" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
